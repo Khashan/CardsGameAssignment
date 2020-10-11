@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-	
 	private int m_Id;
 	private List<Card> m_CardsInHand = new ArrayList<Card>();
 	private int m_HandValue = 0;

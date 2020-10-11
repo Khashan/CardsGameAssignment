@@ -22,6 +22,8 @@ public class Deck extends ArrayList<Card>{
 				this.add(new Card(suit, value));
 			}
 		}
+		
+		Shuffle();
 	}
 	
 	public void Shuffle()

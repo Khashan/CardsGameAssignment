@@ -4,29 +4,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.google.gson.annotations.Expose;
+
 public class Game {
 	private UUID m_GameId;
 	private Map<Integer, Player> m_Players = new HashMap<Integer, Player>();
-	private Deck m_GameDeck = null;
+	private Deck m_GameDeck = new Deck();
 	
+	private transient boolean m_HasDefaultDeck = true;
 	
-	public Game() 
-	{
-		this(null);
-	}
-	
-	public Game(Deck deck)
+	public Game()
 	{
 		m_GameId = UUID.randomUUID();
-		m_GameDeck = deck;
 	}
 	
 	public boolean AddDeck(Deck deck)
 	{
 		boolean added = false;
 		
-		if(m_GameDeck == null)
+		if(m_HasDefaultDeck)
 		{
+			m_HasDefaultDeck = false;
 			m_GameDeck = deck;
 			added = true;
 		}
@@ -34,10 +32,19 @@ public class Game {
 		return added;
 	}
 	
-	public void AddPlayer()
+	public boolean AddPlayer()
 	{	
+		boolean added = false;
+		
 		Player newPlayer = new Player(GetNewPlayerId());
-		m_Players.put(newPlayer.getPlayerId(), newPlayer);
+		
+		if(!m_Players.containsKey(newPlayer.getPlayerId()))
+		{	
+			added = true;
+			m_Players.put(newPlayer.getPlayerId(), newPlayer);
+		}
+		
+		return added;
 	}
 	
 	private int GetNewPlayerId()
@@ -60,6 +67,11 @@ public class Game {
 	public void RemovePlayer(int playerId)
 	{
 		m_Players.remove(playerId);
+	}
+	
+	public Player getPlayer(int playerId)
+	{
+		return m_Players.getOrDefault(playerId, null);
 	}
 	
 	public void dealCards(int playerId)
