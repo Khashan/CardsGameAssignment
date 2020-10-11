@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ca.anderson.game.common.DealCard;
 import ca.anderson.game.common.Deck;
 import ca.anderson.game.common.Game;
 
@@ -28,6 +29,7 @@ public class GamesServlet extends HttpServlet implements IRequestUtils
 		public int remove_player = -1;
 		public boolean shuffle;
 		public boolean delete;
+		public DealCard dealCard;
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -87,6 +89,14 @@ public class GamesServlet extends HttpServlet implements IRequestUtils
 				
 				response.getOutputStream().println(SUCCESS_DELETE_GAME);
 				return;
+			}
+			
+			if(body.dealCard != null)
+			{
+				for(int i = 0; i < body.dealCard.quantity; i ++)
+				{
+					game.dealCards(body.dealCard.toPlayer);					
+				}
 			}
 		}
 		

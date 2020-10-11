@@ -1,10 +1,11 @@
 package ca.anderson.game.common;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.UUID;
-
-import com.google.gson.annotations.Expose;
 
 public class Game {
 	private UUID m_GameId;
@@ -99,4 +100,62 @@ public class Game {
 	{
 		return m_GameId;
 	}
+	
+	public SortedMap<Player, Integer> getPlayers()
+	{
+		SortedMap<Player, Integer> sorted = new TreeMap<Player, Integer>(Collections.reverseOrder());
+		
+		for(Player player: m_Players.values())
+		{
+			sorted.put(player, player.handValue());
+		}
+		
+		return sorted;
+	}
+
+	public Map<Card.Suit, Integer> getCardsLeftBySuit()
+	{
+		return m_GameDeck.getCardsLeftBySuit();
+	}
+	
+	public String getCardsLeftBySuitString()
+	{
+		Map<Card.Suit, Integer> left = getCardsLeftBySuit();
+		
+		StringBuilder message = new StringBuilder();
+		
+		for(Map.Entry<Card.Suit, Integer> entry :  left.entrySet())
+		{
+			message.append(entry.getValue() + " " + entry.getKey());
+			message.append("");
+		}
+		
+		return message.toString();
+	}
+	
+	public String getCardsLeftByValueSortedString()
+	{
+		Map<Card.Suit, SortedMap<Integer, Integer>> sorted = m_GameDeck.GetCardsByValueLeftSorted();
+		
+		StringBuilder message = new StringBuilder();
+		
+		for(Map.Entry<Card.Suit, SortedMap<Integer, Integer>> entry : sorted.entrySet())
+		{
+			for(Map.Entry<Integer, Integer> sortedEntry : entry.getValue().entrySet())
+			{
+				String cardValueName = Card.getCardNameByValue(sortedEntry.getKey());
+				
+				message.append(cardValueName + " of " + entry.getKey().toString() + " x" + sortedEntry.getValue());
+				message.append("");
+			}			
+		}
+		
+		return message.toString();
+	}
+	
+	public Map<Card.Suit, SortedMap<Integer, Integer>> getCardsLeftByValueSorted()
+	{
+		return m_GameDeck.GetCardsByValueLeftSorted();
+	}
+	
 }

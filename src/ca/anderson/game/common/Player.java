@@ -28,4 +28,9 @@ public class Player {
 	{	
 		return m_HandValue;
 	}
+	
+	public List<Card> getCards()
+	{
+		return m_CardsInHand;
+	}
 }

@@ -26,6 +26,7 @@ public class Card {
 	private Suit m_Suit;
 	private int m_Value;
 	private String m_FullName;
+	private String m_ValueName;
 	
 	
 	public Card(Suit suit, int value)
@@ -53,8 +54,30 @@ public class Card {
 	
 	private void GetCardName()
 	{
+		String endName = " of " + m_Suit.name();
+		m_ValueName = getCardNameByValue(m_Value);
+		m_FullName = m_ValueName + endName;
+	}
+	
+	public int getValue()
+	{
+		return m_Value;
+	}
+	
+	public Suit getSuit()
+	{
+		return m_Suit;
+	}
+	
+	public String getName()
+	{
+		return m_FullName;
+	}
+	
+	public static String getCardNameByValue(int value)
+	{
 		NamedCard namedCard;
-		switch(m_Value)
+		switch(value)
 		{
 			case 1:
 				namedCard = NamedCard.Ace;
@@ -73,31 +96,23 @@ public class Card {
 				namedCard = NamedCard.Number;
 		}
 		
-		String endName = " of " + m_Suit.name();
+		String valueName = "";
 		
 		if(namedCard == NamedCard.Number)
 		{
-			m_FullName = getValue() + endName;			
+			valueName = value + "";	
 		}
 		else
 		{
-			m_FullName = namedCard.name() + endName;
+			valueName = namedCard.name();
 		}
+		
+		return valueName;
 	}
 	
-	public int getValue()
+	public String getValueName()
 	{
-		return m_Value;
-	}
-	
-	public Suit getSuit()
-	{
-		return m_Suit;
-	}
-	
-	public String getName()
-	{
-		return m_FullName;
+		return m_ValueName;
 	}
 	
 	@Override
