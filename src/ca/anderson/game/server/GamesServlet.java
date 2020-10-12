@@ -95,17 +95,21 @@ public class GamesServlet extends HttpServlet implements IRequestUtils
 			{
 				for(int i = 0; i < body.dealCard.quantity; i ++)
 				{
-					game.dealCards(body.dealCard.toPlayer);					
+					if(!game.dealCards(body.dealCard.toPlayer))
+					{
+						break;
+					}
 				}
 			}
 		}
 		
+		ServerDataStore.getInstance().updateGame(game);
 		response.getOutputStream().println(gson.toJson(game));
 	}
 
 	private Game createGame()
 	{
-		Game newGame = new Game();
+		Game newGame = new Game(true);
 		ServerDataStore.getInstance().addGame(newGame);
 		
 		return newGame;
@@ -143,6 +147,8 @@ public class GamesServlet extends HttpServlet implements IRequestUtils
 			selectedGame.RemovePlayer(body.remove_player);
 		}
 		
+
+		ServerDataStore.getInstance().updateGame(selectedGame);
 		response.getOutputStream().println(gson.toJson(selectedGame));
 	}
 	

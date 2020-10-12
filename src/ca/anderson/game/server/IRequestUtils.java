@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 
 public interface IRequestUtils
 {
-	static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	static final Gson gson = new GsonBuilder().create();
 	
 	static final String ERROR_INVALID_GAME = "Invalid game";
 	static final String ERROR_UNSUPPORTED_MEDIA = "Unsupported Media Type";

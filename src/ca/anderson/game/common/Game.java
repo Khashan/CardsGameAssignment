@@ -1,22 +1,33 @@
 package ca.anderson.game.common;
 
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.UUID;
 
 public class Game {
 	private UUID m_GameId;
 	private Map<Integer, Player> m_Players = new HashMap<Integer, Player>();
-	private Deck m_GameDeck = new Deck();
+	private Deck m_GameDeck;
 	
 	private transient boolean m_HasDefaultDeck = true;
 	
+	
 	public Game()
 	{
-		m_GameId = UUID.randomUUID();
+		this(false);
+	}
+	
+	public Game(boolean newGame)
+	{
+		if(newGame)
+		{
+			m_GameId = UUID.randomUUID();
+			m_GameDeck = new Deck();
+		}
 	}
 	
 	public boolean AddDeck(Deck deck)
@@ -75,8 +86,9 @@ public class Game {
 		return m_Players.getOrDefault(playerId, null);
 	}
 	
-	public void dealCards(int playerId)
+	public boolean dealCards(int playerId)
 	{
+		boolean dealt = false;
 		Player player = m_Players.get(playerId);
 
 		if(m_GameDeck.size() > 0 && player != null)
@@ -85,7 +97,10 @@ public class Game {
 			
 			player.addCard(m_GameDeck.get(0));
 			m_GameDeck.remove(0);
+			dealt = true;
 		}		
+		
+		return dealt;
 	}
 	
 	public void ShuffleDeck()
@@ -101,16 +116,38 @@ public class Game {
 		return m_GameId;
 	}
 	
-	public SortedMap<Player, Integer> getPlayers()
+	public Map<Player, Integer> getPlayers()
 	{
-		SortedMap<Player, Integer> sorted = new TreeMap<Player, Integer>(Collections.reverseOrder());
+		Map<Player, Integer> playersList = new HashMap<>();
+		LinkedHashMap<Player, Integer> sortedPlayersList = new LinkedHashMap<>();
 		
 		for(Player player: m_Players.values())
 		{
-			sorted.put(player, player.handValue());
+			playersList.put(player, player.handValue());
 		}
 		
-		return sorted;
+		// Source: https://howtodoinjava.com/java/sort/java-sort-map-by-values/
+		playersList.entrySet()
+	    .stream()
+	    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) 
+	    .forEachOrdered(x -> sortedPlayersList.put(x.getKey(), x.getValue()));
+		
+
+		return sortedPlayersList;
+	}
+	
+	public String getPlayersString()
+	{
+		Map<Player, Integer> playersList = getPlayers();
+		
+		StringBuilder builder = new StringBuilder();
+		
+		for(Entry<Player, Integer> entry : playersList.entrySet())
+		{
+			builder.append(entry.getKey().getPlayerId() + " > " + entry.getValue() + "\n");
+		}
+		
+		return builder.toString();
 	}
 
 	public Map<Card.Suit, Integer> getCardsLeftBySuit()
@@ -126,7 +163,7 @@ public class Game {
 		
 		for(Map.Entry<Card.Suit, Integer> entry :  left.entrySet())
 		{
-			message.append(entry.getValue() + " " + entry.getKey());
+			message.append(entry.getValue() + " " + entry.getKey() + " | ");
 			message.append("");
 		}
 		
@@ -145,7 +182,7 @@ public class Game {
 			{
 				String cardValueName = Card.getCardNameByValue(sortedEntry.getKey());
 				
-				message.append(cardValueName + " of " + entry.getKey().toString() + " x" + sortedEntry.getValue());
+				message.append(cardValueName + " of " + entry.getKey().toString() + " x" + sortedEntry.getValue() + " | ");
 				message.append("");
 			}			
 		}

@@ -22,6 +22,14 @@ public class ServerDataStore {
 		return m_ActiveGames.getOrDefault(gameId, null);
 	}
 	
+	public void updateGame(Game game)
+	{
+		if(m_ActiveGames.containsKey(game.getGameId()))
+		{
+			m_ActiveGames.put(game.getGameId(), game);
+		}
+	}
+	
 	public void removeGame(Game game)
 	{
 		removeGame(game.getGameId());
